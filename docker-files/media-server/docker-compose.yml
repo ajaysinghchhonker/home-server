@@ -1,17 +1,6 @@
 # Creating Server
-version: '2.1'
+version: '2'
 services:
-  portainer:
-    container_name: portainer
-    image: portainer/portainer
-    command: -H unix:///var/run/docker.sock
-    restart: always
-    ports:
-      - "9000:9000"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${CONFIG}/portainer/data:/data
-
   transmission:
     container_name: transmission
     image: linuxserver/transmission
@@ -29,6 +18,7 @@ services:
 
   plex:
     container_name: plex
+    hostname: media-server
     image: plexinc/pms-docker
     restart: unless-stopped
     ports:
@@ -47,7 +37,6 @@ services:
       - PLEX_CLAIM=
       - PLEX_UID=${PUID}
       - PLEX_GID=${PGID}
-    hostname: media-server
     volumes:
       - ${CONFIG}/plex:/config
       - ${CONFIG}/plex/transcode:/transcode
@@ -151,21 +140,6 @@ services:
     volumes:
       - ${CONFIG}/ombi:/config
 
-  netdata:
-    container_name: netdata
-    image: titpetric/netdata
-    restart: unless-stopped
-    cap_add:
-      - SYS_PTRACE
-    network_mode: host
-    environment:
-      - TZ=${TZ}
-    volumes:
-      - ${CONFIG}/netdata:/etc/netdata
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-
   mylar:
     container_name: mylar
     build: https://github.com/Mathix/docker-mylar.git
@@ -183,97 +157,3 @@ services:
       - ${CONFIG}/mylar:/config
       - ${STORAGE}/downloads/complete:/downloads
       - ${STORAGE}/comics:/comics
-
-  organizr:
-    container_name: organizr
-    restart: unless-stopped
-    image: organizrtools/organizr-v2
-    volumes:
-      - ${CONFIG}/organizr:/config
-    ports:
-      - "80:80"
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - ${CONFIG}/organizr:/config
-
-  watchtower:
-    container_name: watchtower
-    restart: unless-stopped
-    image: v2tec/watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --schedule "0 0 4 * * *" --cleanup
-
-  homeassistant:
-    container_name: homeassistant
-    restart: unless-stopped
-    image: homeassistant/home-assistant
-    devices:
-      - /dev/ttyUSB0:/dev/ttyUSB0
-      - /dev/ttyUSB1:/dev/ttyUSB1
-      - /dev/ttyACM0:/dev/ttyACM0
-    volumes:
-      - ${CONFIG}/homeassistant:/config
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - "8123:8123"
-    privileged: true
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-
-  mariadb:
-    image: "linuxserver/mariadb"
-    container_name: "mariadb"
-    hostname: mariadb
-    volumes:
-        - ${CONFIG}/mariadb:/config
-    ports:
-      - "3306:3306"
-    restart: unless-stopped
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      
-  nextcloud:
-    container_name: nextcloud
-    restart: unless-stopped
-    image: linuxserver/nextcloud
-    depends_on:
-      - mariadb
-    volumes:
-      - ${CONFIG}/nextcloud:/config
-      - ${ROOT}/nextcloud:/data
-      - ${STORAGE}:/server/data
-      - ${CONFIG}:/server/config
-    ports:
-      - "443:443"
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      
-  phpmyadmin:
-    hostname: phpmyadmin
-    container_name: phpmyadmin
-    image: phpmyadmin/phpmyadmin
-    restart: unless-stopped
-    depends_on:
-      - mariadb
-    links:
-      - mariadb:db
-    ports:
-      - "8081:80"
-    environment:
-      - PMA_HOST=mariadb
-      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    

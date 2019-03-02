@@ -1,0 +1,62 @@
+# Creating Server
+version: '2'
+services:
+  portainer:
+    container_name: portainer
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${CONFIG}/portainer/data:/data
+      
+  registry:
+      container_name: registry
+      image: registry:latest
+      restart: always
+      ports:
+        - "5000:5000"
+      environment:
+        REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
+      volumes:
+        - ${STORAGE}/docker-registry:/data
+        
+  watchtower:
+    container_name: watchtower
+    restart: unless-stopped
+    image: v2tec/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --schedule "0 0 4 * * *" --cleanup
+    
+  organizr:
+    container_name: organizr
+    restart: unless-stopped
+    image: organizrtools/organizr-v2
+    volumes:
+      - ${CONFIG}/organizr:/config
+    ports:
+      - "80:80"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG}/organizr:/config
+      
+  # netdata:
+    # container_name: netdata
+    # image: titpetric/netdata
+    # restart: unless-stopped
+    # cap_add:
+      # - SYS_PTRACE
+    # network_mode: host
+    # environment:
+      # - TZ=${TZ}
+    # volumes:
+      # - ${CONFIG}/netdata:/etc/netdata
+      # - /proc:/host/proc:ro
+      # - /sys:/host/sys:ro
+      # - /var/run/docker.sock:/var/run/docker.sock

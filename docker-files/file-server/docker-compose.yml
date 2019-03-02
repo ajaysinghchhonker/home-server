@@ -1,0 +1,53 @@
+# Creating Server
+version: '2'
+services:
+  mariadb:
+    image: "linuxserver/mariadb"
+    container_name: "mariadb"
+    hostname: mariadb
+    volumes:
+        - ${CONFIG}/mariadb:/config
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      
+  nextcloud:
+    container_name: nextcloud
+    restart: unless-stopped
+    image: linuxserver/nextcloud
+    depends_on:
+      - mariadb
+    volumes:
+      - ${CONFIG}/nextcloud:/config
+      - ${ROOT}/nextcloud:/data
+      - ${STORAGE}:/server/data
+      - /opt/server/config:/server/config
+    ports:
+      - "443:443"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      
+  phpmyadmin:
+    hostname: phpmyadmin
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    links:
+      - mariadb:db
+    ports:
+      - "8081:80"
+    environment:
+      - PMA_HOST=mariadb
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}

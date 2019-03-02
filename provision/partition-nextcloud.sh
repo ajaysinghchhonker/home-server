@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "formating drive sdb"
+echo "formating drive sdc"
 
 (
   echo o # Create a new empty DOS partition table
@@ -10,6 +10,6 @@ echo "formating drive sdb"
   echo   # First sector (Accept default: 1)
   echo   # Last sector (Accept default: varies)
   echo w # Write changes
-) | sudo fdisk /dev/sdb > /dev/null
+) | sudo fdisk /dev/sdc > /dev/null
 
-sudo mkfs -t ext4 /dev/sdb1 > /dev/null
+sudo mkfs -t ext4 /dev/sdc1 > /dev/null
