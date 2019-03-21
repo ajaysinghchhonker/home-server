@@ -1,3 +1,4 @@
 .env
 .vagrant
 *.vmdk
+startup.bat
