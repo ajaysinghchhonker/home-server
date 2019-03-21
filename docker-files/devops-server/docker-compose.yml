@@ -1,0 +1,28 @@
+# Creating Server
+version: '2'
+services:
+  registry:
+      container_name: registry
+      image: registry:latest
+      restart: always
+      ports:
+        - "5000:5000"
+      environment:
+        REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
+      volumes:
+        - ${STORAGE}/docker-registry:/data
+  jenkins: 
+    container_name: jenkins
+    build: jenkins/.
+    privileged: true
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    volumes:
+      - ${CONFIG}/jenkins:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      #- /usr/bin/docker:/usr/bin/docker
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}

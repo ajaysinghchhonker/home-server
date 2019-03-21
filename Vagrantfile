@@ -51,6 +51,8 @@ Vagrant.configure(2) do |config|
   config.vm.network "forwarded_port", guest: 8081, host: 8081
   # registry
   config.vm.network "forwarded_port", guest: 5000, host: 5000
+  # registry
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
   
   
   
@@ -86,9 +88,9 @@ Vagrant.configure(2) do |config|
   # Install docker-compose
   config.vm.provision :shell, preserve_order: true, inline: "cp /vagrant/provision/fstab /etc/fstab"
   config.vm.provision :shell, preserve_order: true, path: "provision/setup.sh", privileged: false
-  config.vm.provision :shell, preserve_order: true, inline: "cd /vagrant/docker-files/management-server; sudo docker-compose down --rmi 'all'; sudo docker-compose up -d", run: 'always', privileged: false
-  config.vm.provision :shell, preserve_order: true, inline: "cd /vagrant/docker-files/file-server; sudo docker-compose down --rmi 'all'; sudo docker-compose up -d", run: 'always', privileged: false
-  config.vm.provision :shell, preserve_order: true, inline: "cd /vagrant/docker-files/media-server; sudo docker-compose down --rmi 'all'; sudo docker-compose up -d", run: 'always', privileged: false
-  config.vm.provision :shell, preserve_order: true, inline: "cd /vagrant/docker-files/development-server; sudo docker-compose down --rmi 'all'; sudo docker-compose up -d", run: 'always', privileged: false
+  # config.vm.provision :shell, preserve_order: true, inline: "cd /vagrant/docker-files/management-server; sudo docker-compose down --rmi 'all'; sudo docker-compose up -d", run: 'always', privileged: false
+  # config.vm.provision :shell, preserve_order: true, inline: "cd /vagrant/docker-files/file-server; sudo docker-compose down --rmi 'all'; sudo docker-compose up -d", run: 'always', privileged: false
+  # config.vm.provision :shell, preserve_order: true, inline: "cd /vagrant/docker-files/media-server; sudo docker-compose down --rmi 'all'; sudo docker-compose up -d", run: 'always', privileged: false
+  # config.vm.provision :shell, preserve_order: true, inline: "cd /vagrant/docker-files/development-server; sudo docker-compose down --rmi 'all'; sudo docker-compose up -d", run: 'always', privileged: false
 
 end
