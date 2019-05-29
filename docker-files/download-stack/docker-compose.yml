@@ -7,57 +7,17 @@ services:
     restart: unless-stopped
     ports:
       - "9091:9091"
+      - 41742:41742
+      - 41742:41742/udp
     environment:
       - TZ=${TZ}
       - PUID=${PUID}
       - PGID=${PGID}
+      - TRANSMISSION_WEB_HOME=/combustion-release
     volumes:
       - ${CONFIG}/transmission:/config
       - ${STORAGE}/downloads/complete:/downloads
       - ${STORAGE}/downloads/temp:/var/lib/transmission-daemon/incomplete
-
-  plex:
-    container_name: plex
-    hostname: media-server
-    image: plexinc/pms-docker
-    restart: unless-stopped
-    ports:
-      - "32400:32400/tcp"
-      - "3005:3005/tcp"
-      - "8324:8324/tcp"
-      - "32469:32469/tcp"
-      - "1900:1900/udp"
-      - "32410:32410/udp"
-      - "32412:32412/udp"
-      - "32413:32413/udp"
-      - "32414:32414/udp"
-      - "33400:33400"
-    environment:
-      - TZ=${TZ}
-      - PLEX_CLAIM=
-      - PLEX_UID=${PUID}
-      - PLEX_GID=${PGID}
-    volumes:
-      - ${CONFIG}/plex:/config
-      - ${CONFIG}/plex/transcode:/transcode
-      - ${STORAGE}:/data
-      
-  tautulli:
-    container_name: tautulli
-    image: tautulli/tautulli
-    restart: unless-stopped
-    depends_on: 
-      - plex
-    ports:
-      - "8181:8181"
-    environment:
-      - TZ=${TZ}
-      - PUID=${PUID}
-      - PGID=${PGID}
-    volumes:
-      - ${CONFIG}/tautulli:/config
-      - ${CONFIG}/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/plex_logs:ro
-
   sonarr:
     container_name: sonarr
     image: linuxserver/sonarr
@@ -75,7 +35,6 @@ services:
       - ${CONFIG}/sonarr:/config
       - ${STORAGE}/series:/tv
       - ${STORAGE}/downloads/complete:/downloads
-
   radarr:
     container_name: radarr
     image: linuxserver/radarr
@@ -93,7 +52,6 @@ services:
       - ${CONFIG}/radarr:/config
       - ${STORAGE}/movies:/movies
       - ${STORAGE}/downloads/complete:/downloads
-
   jackett:
     container_name: jackett
     image: linuxserver/jackett
@@ -107,39 +65,6 @@ services:
     volumes:
       - ${CONFIG}/jackett:/config
       - ${STORAGE}/downloads/blackhole:/downloads
-      
-  ubooquity :
-    container_name: ubooquity 
-    image: linuxserver/ubooquity 
-    restart: unless-stopped
-    ports:
-      - "2202:2202"
-      - "2203:2203"
-    environment:
-      - TZ=${TZ}
-      - PUID=${PUID}
-      - PGID=${PGID}
-    volumes:
-      - ${CONFIG}/ubooquity:/config
-      - ${STORAGE}/comics:/comics     
-    
-  ombi:
-    container_name: ombi
-    image: linuxserver/ombi
-    restart: unless-stopped
-    depends_on:
-      - sonarr
-      - radarr
-      - jackett
-    ports:
-      - "3579:3579"
-    environment:
-      - TZ=${TZ}
-      - PUID=${PUID}
-      - PGID=${PGID}
-    volumes:
-      - ${CONFIG}/ombi:/config
-
   mylar:
     container_name: mylar
     build: https://github.com/Mathix/docker-mylar.git

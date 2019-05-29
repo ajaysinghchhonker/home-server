@@ -1,0 +1,37 @@
+# Creating Server
+version: '3'
+services:
+  openvpn-home:
+    image: linuxserver/openvpn-as
+    container_name: openvpn-home
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      #- INTERFACE=eth0 #optional
+    volumes:
+      - ${CONFIG}/openvpn-home:/config
+    ports:
+      - 41739:943
+      - 41740:41740
+      - 41741:41741/udp
+    restart: unless-stopped
+  openvpn-oakville:
+    image: linuxserver/openvpn-as:2.7.3-ls19
+    container_name: openvpn-oakville
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      #- INTERFACE=eth0 #optional
+    volumes:
+      - ${CONFIG}/openvpn-oakville:/config
+    ports:
+      - 35611:943
+      - 35612:35612
+      - 35613:35613/udp
+    restart: unless-stopped

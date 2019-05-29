@@ -1,5 +1,5 @@
 # Creating Server
-version: '2'
+version: '3'
 services:
   mariadb:
     image: "linuxserver/mariadb"
@@ -7,8 +7,8 @@ services:
     hostname: mariadb
     volumes:
         - ${CONFIG}/mariadb:/config
-    ports:
-      - "3306:3306"
+    #ports:
+    #  - "3306:3306"
     restart: unless-stopped
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
@@ -26,7 +26,7 @@ services:
       - ${CONFIG}/nextcloud:/config
       - ${ROOT}/nextcloud:/data
       - ${STORAGE}:/server/data
-      - /opt/server/config:/server/config
+      - ${CONFIG}:/server/config
     ports:
       - "443:443"
     environment:
@@ -51,3 +51,26 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
+      
+  samba: 
+    container_name: samba
+    command: "-u \"${SAMBA_USERNAME};${SAMBA_PASSWORD}\" -s \"storage;/storage;yes;no;yes;all;none;;comment1\" -s \"config;/config;yes;no;yes;all;none;;comment1\""
+    hostname: samba
+    image: dperson/samba
+    restart: always
+    volumes: 
+      - ${CONFIG}/samba:/etc/samba
+      - ${STORAGE}:/storage
+      - ${CONFIG}:/config
+    ports:
+      - "137:137/udp"
+      - "138:138/udp"
+      - "139:139/tcp"
+      - "445:445/tcp"
+    network_mode: host
+    environment: 
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - "NMBD=True"
+      - "RECYCLE=False"

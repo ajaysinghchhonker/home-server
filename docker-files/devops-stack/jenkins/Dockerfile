@@ -16,7 +16,7 @@ RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
 #RUN groupadd  -g ${DOCKER_GID} docker 
 RUN usermod -aG docker jenkins
 RUN chown -R jenkins:jenkins /var/jenkins_home
-RUN mkdir -p /etc/docker && echo "{\"insecure-registries\": [\"192.168.0.108:5000\", \"registry:5000\"}" > /etc/docker/daemon.js
+RUN mkdir -p /etc/docker && echo "{\"insecure-registries\": [\"10.0.0.5:5000\", \"registry:5000\"]}" > /etc/docker/daemon.js
 
 #USER jenkins
  

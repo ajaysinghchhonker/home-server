@@ -21,8 +21,10 @@ services:
     volumes:
       - ${CONFIG}/jenkins:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
-      #- /usr/bin/docker:/usr/bin/docker
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
+    #mem_limit: 300m
+    #cpus: 0.5
+    
