@@ -4,7 +4,7 @@ services:
   plex:
     container_name: plex
     hostname: media-server
-    image: plexinc/pms-docker
+    image: plexinc/pms-docker:plexpass
     restart: unless-stopped
     ports:
       - "32400:32400/tcp"
@@ -28,6 +28,7 @@ services:
       - ${STORAGE}:/data
     devices:
      - /dev/dri:/dev/dri
+    privileged: true
       
   tautulli:
     container_name: tautulli

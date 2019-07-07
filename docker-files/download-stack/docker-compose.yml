@@ -82,3 +82,21 @@ services:
       - ${CONFIG}/mylar:/config
       - ${STORAGE}/downloads/complete:/downloads
       - ${STORAGE}/comics:/comics
+  lazylibrarian:
+    image: linuxserver/lazylibrarian
+    container_name: lazylibrarian
+    environment:
+      - PUID=${PUID}
+      - GUID=1000
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG}/lazylibrarian:/config
+      - ${STORAGE}/downloads/complete:/downloads
+      - ${STORAGE}/books:/books
+      - ${STORAGE}/audio/audiobooks:/audiobooks
+    ports:
+      - 5299:5299
+    restart: unless-stopped
+    depends_on:
+      - transmission
+      - jackett

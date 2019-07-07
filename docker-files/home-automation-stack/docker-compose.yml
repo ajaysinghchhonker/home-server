@@ -1,5 +1,5 @@
 # Creating Server
-version: '2'
+version: '3.4'
 services:
   homeassistant:
     container_name: homeassistant
@@ -12,8 +12,9 @@ services:
     volumes:
       - ${CONFIG}/homeassistant:/config
       - /etc/localtime:/etc/localtime:ro
-    ports:
-      - "8123:8123"
+    #ports:
+    #  - "8123:8123"
+    network_mode: host
     privileged: true
     environment:
       - PUID=${PUID}
