@@ -27,11 +27,22 @@ services:
     hostname: mariadb
     volumes:
         - ${CONFIG}/mariadb:/config
-    #ports:
-    #  - "3306:3306"
     restart: unless-stopped
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+
+  flextv:
+    image: "digitalhigh/flextv"
+    container_name: "flextv"
+    volumes:
+        - ${CONFIG}/flextv:/config
+    ports:
+      - "81:80"
+    restart: unless-stopped
+    environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
